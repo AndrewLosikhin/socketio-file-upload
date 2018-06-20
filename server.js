@@ -175,7 +175,9 @@ function SocketIOFileUploadServer() {
 				if (fileInfo.writeStream) {
 					// Update the file modified time.  This doesn't seem to work; I'm not
 					// sure if it's my error or a bug in Node.
-					fs.utimes(fileInfo.pathName, new Date(), fileInfo.mtime, function (err) {
+					// IE issue
+					var mtime = (Object.prototype.toString.call(fileInfo.mtime) === "[object Date]" && !isNaN(fileInfo.mtime)) ? fileInfo.mtime : new Date();
+					fs.utimes(fileInfo.pathName, new Date(), mtime, function (err) {
 						// Check if the upload was aborted
 						if (!files[data.id]) {
 							return;
